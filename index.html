@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Évaluation Mentale Golf</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; }
+        h2 { color: #2c3e50; }
+        .question { margin-bottom: 15px; }
+        .result { font-weight: bold; margin-top: 20px; }
+        button { padding: 10px; background: #3498db; color: white; border: none; cursor: pointer; }
+        button:hover { background: #2980b9; }
+        input[type="range"] { width: 100%; accent-color: #7f8c8d; }
+        .category-feedback { margin-top: 10px; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <h2>🧠 Évaluation de la Préparation Mentale au Golf</h2>
+    <form id="mentalForm">
+        <div id="questionsContainer"></div>
+        <button type="button" onclick="calculateScore()">Voir les résultats</button>
+    </form>
+    <div id="result" class="result"></div>
+    
+    <script>
+        const categories = [
+            { name: "Gestion des émotions et du stress", questions: [
+                "Je sais gérer mon anxiété avant un départ important (trou n°1, compétition…).",
+                "Je parviens à évacuer rapidement la frustration après un mauvais coup ou un mauvais trou.",
+                "Je ne laisse pas la colère ou l’agacement affecter mes décisions sur le parcours.",
+                "Je sais canaliser mon excitation après un très bon coup ou une bonne série.",
+                "Je ne ressens pas de peur excessive sur des coups difficiles (bunker, obstacle d’eau, putt sous pression…)."
+            ]},
+            { name: "Concentration et focus", questions: [
+                "Je suis capable de maintenir ma concentration sur 18 trous.",
+                "Je ne me laisse pas distraire par les autres joueurs ou le public.",
+                "Je sais garder un état d'esprit positif même quand le jeu devient difficile.",
+                "Je reste dans le moment présent et évite de ressasser mes erreurs passées.",
+                "J’ai une routine mentale efficace avant chaque coup."
+            ]},
+            { name: "Stratégie et adaptation", questions: [
+                "Je sais adapter mon jeu aux conditions climatiques et au parcours.",
+                "Je prends le temps d’analyser chaque coup avant de jouer.",
+                "Je suis capable de modifier ma stratégie si nécessaire en cours de partie.",
+                "Je sais m’inspirer des bons coups de mes adversaires pour progresser.",
+                "Je ne me précipite pas sous la pression et reste méthodique."
+            ]},
+            { name: "Motivation et engagement", questions: [
+                "J’ai un objectif précis à long terme pour mon jeu.",
+                "Je joue régulièrement et je m’entraîne avec sérieux.",
+                "Je trouve toujours du plaisir à jouer, même après un mauvais parcours.",
+                "Je ressens une vraie satisfaction quand je progresse mentalement.",
+                "Je suis prêt à travailler mon mental autant que ma technique."
+            ]}
+        ];
+        
+        const container = document.getElementById("questionsContainer");
+        categories.forEach((category, catIndex) => {
+            const section = document.createElement("h3");
+            section.textContent = category.name;
+            container.appendChild(section);
+            category.questions.forEach((q, index) => {
+                const div = document.createElement("div");
+                div.classList.add("question");
+                div.innerHTML = `<label>${q} </label>
+                <input type="range" min="1" max="10" id="q${catIndex}_${index}" value="5">`;
+                container.appendChild(div);
+            });
+        });
+        
+        function calculateScore() {
+            let total = 0;
+            let feedback = [];
+            categories.forEach((category, catIndex) => {
+                let catTotal = 0;
+                category.questions.forEach((_, index) => {
+                    const value = parseInt(document.getElementById(`q${catIndex}_${index}`).value) || 0;
+                    catTotal += value;
+                    total += value;
+                });
+                
+                let color = "";
+                if (catTotal < 30) {
+                    color = "🔴";
+                    feedback.push(`${color} ${category.name}: il y a urgence à se mettre au travail.`);
+                } else if (catTotal < 40) {
+                    color = "🟡";
+                    feedback.push(`${color} ${category.name}: ça peut attendre sauf si vous en ressentez l'envie.`);
+                } else {
+                    color = "🟢";
+                    feedback.push(`${color} ${category.name}: vous êtes au top, pensez juste à le vérifier régulièrement.`);
+                }
+            });
+            
+            let message = `🔢 Score total : ${total}/200 <br><br>`;
+            if (total >= 160) {
+                message += "Mental solide, vous avez déjà une bonne préparation psychologique.<br>";
+            } else if (total >= 120) {
+                message += "Bon mental mais quelques points à améliorer selon votre score le plus faible.<br>";
+            } else {
+                message += "Le travail mental est fortement recommandé pour optimiser votre jeu, vous auriez avantage à suivre les conseils ci-dessous :<br>";
+            }
+            feedback.forEach(fb => message += `${fb}<br>`);
+            document.getElementById("result").innerHTML = message;
+        }
+    </script>
+</body>
+</html>
