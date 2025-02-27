@@ -83,42 +83,34 @@
                 ]
             };
             
-            function getRandomFeedback(color) {
-                let options = feedbackOptions[color];
-                return options[Math.floor(Math.random() * options.length)];
+            function getRandomFeedback(color, usedComments) {
+                let options = [...feedbackOptions[color]];
+                return options.splice(0, categories.length);
             }
             
             const pagesContainer = document.getElementById("pagesContainer");
-            const pages = [];
-            
             categories.forEach((category, catIndex) => {
                 const page = document.createElement("div");
                 page.classList.add("page");
                 if (catIndex === 0) page.classList.add("active");
                 page.innerHTML = `<h3>${category.name}</h3>`;
                 category.questions.forEach((q, index) => {
-                    const div = document.createElement("div");
-                    div.classList.add("question");
-                    div.innerHTML = `<label>${q} </label>
-                    <input type="range" min="1" max="10" id="q${catIndex}_${index}" value="5">`;
-                    page.appendChild(div);
+                    page.innerHTML += `<label>${q}</label>
+                    <input type="range" min="1" max="10" id="q${catIndex}_${index}" value="5"><br>`;
                 });
                 pagesContainer.appendChild(page);
-                pages.push(page);
             });
             
             const prevButton = document.getElementById("prevButton");
             const nextButton = document.getElementById("nextButton");
             const calculateButton = document.getElementById("calculateButton");
-            
             function changePage(step) {
-                pages[currentPage].classList.remove("active");
+                document.querySelector(".active").classList.remove("active");
                 currentPage += step;
-                currentPage = Math.max(0, Math.min(currentPage, pages.length - 1));
-                pages[currentPage].classList.add("active");
+                pagesContainer.children[currentPage].classList.add("active");
                 prevButton.style.display = currentPage === 0 ? "none" : "block";
-                nextButton.style.display = currentPage === pages.length - 1 ? "none" : "block";
-                calculateButton.style.display = currentPage === pages.length - 1 ? "block" : "none";
+                nextButton.style.display = currentPage === pagesContainer.children.length - 1 ? "none" : "block";
+                calculateButton.style.display = currentPage === pagesContainer.children.length - 1 ? "block" : "none";
             }
             
             prevButton.addEventListener("click", () => changePage(-1));
@@ -127,18 +119,13 @@
                 let total = 0;
                 let feedback = [];
                 categories.forEach((category, catIndex) => {
-                    let categoryScore = 0;
-                    category.questions.forEach((_, index) => {
-                        const value = parseInt(document.getElementById(`q${catIndex}_${index}`).value) || 0;
-                        categoryScore += value;
-                        total += value;
-                    });
+                    let categoryScore = Array.from(document.querySelectorAll(`#pagesContainer input[id^=q${catIndex}_]`)).reduce((sum, input) => sum + parseInt(input.value), 0);
+                    total += categoryScore;
                     let categoryPercentage = Math.round((categoryScore / 50) * 100);
                     let color = categoryPercentage < 30 ? "red" : categoryPercentage < 70 ? "orange" : "green";
-                    feedback.push(`<p><span style='color:${color}; font-weight:bold;'>${category.name}: ${categoryPercentage}%</span> - <span style='color:black; font-weight:normal;'>${getRandomFeedback(color)}</span></p>`);
+                    feedback.push(`<p><span style='color:${color}; font-weight:bold;'>${category.name}: ${categoryPercentage}%</span> - <span style='color:black; font-weight:normal;'>${getRandomFeedback(color, feedback)[catIndex]}</span></p>`);
                 });
-                let percentage = Math.round((total / 200) * 100);
-                document.body.innerHTML = `<h2>🧠 Mon mental au golf</h2><br><p><strong>🔢 Votre mental au golf est globalement à ${percentage}%</strong></p>${feedback.join('')}<br><button onclick='location.reload()'>Recommencer le test</button>`;
+                document.body.innerHTML = `<h2>🧠 Mon mental au golf</h2><br><p><strong>🔢 Votre mental au golf est globalement à ${Math.round((total / 200) * 100)}%</strong></p>${feedback.join('')}<br><button onclick='location.reload()'>Recommencer le test</button>`;
             });
         });
     </script>
