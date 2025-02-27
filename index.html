@@ -109,14 +109,14 @@
                     });
                     let categoryPercentage = Math.round((categoryScore / 50) * 100);
                     let feedbackMessage = categoryPercentage < 30 ? '<span style="color:red;"><b>Il y a urgence à travailler ce point.</b></span>' :
-                                         categoryPercentage < 40 ? '<span style="color:orange;"><b>Ce point peut être amélioré.</b></span>' :
+                                         categoryPercentage < 70 ? '<span style="color:orange;"><b>Ce point peut être amélioré.</b></span>' :
                                          '<span style="color:green;"><b>Vous êtes au top, continuez ainsi !</b></span>';
-                    feedback.push(`<p>${category.name}: ${categoryPercentage}% - ${feedbackMessage}</p>`);
+                    feedback.push(`<p><span style='color:${categoryPercentage < 30 ? "red" : categoryPercentage < 70 ? "orange" : "green"}; font-weight:bold;'>${category.name}: ${categoryPercentage}%</span> - ${feedbackMessage}</p>`);
                 });
                 let percentage = Math.round((total / 200) * 100);
                 
                 let resultHTML = `<h2>🧠 Mon mental au golf</h2><br>
-                    <p>🔢 Votre mental au golf est à <strong>${percentage}%</strong></p>
+                    <p><strong>🔢 Votre mental au golf est globalement à ${percentage}%</strong></p>
                     ${feedback.join('')}<br>
                     <button onclick='location.reload()'>Recommencer le test</button>`;
                 document.body.innerHTML = resultHTML;
@@ -125,4 +125,3 @@
     </script>
 </body>
 </html>
-
