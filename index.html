@@ -8,7 +8,7 @@
         body { font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; }
         h2 { color: #2c3e50; text-align: center; margin-bottom: 20px; }
         .question { margin-bottom: 15px; }
-        .result { font-weight: bold; margin-top: 20px; }
+        .result { font-weight: bold; margin-top: 20px; text-align: center; }
         button { padding: 10px; background: #3498db; color: white; border: none; cursor: pointer; border-radius: 20px; }
         button:hover { background: #2980b9; }
         input[type="range"] { width: 100%; accent-color: #7f8c8d; }
@@ -33,32 +33,32 @@
             let currentPage = 0;
             const categories = [
                 { name: "Gestion des émotions et du stress", questions: [
-                    "Je sais gérer mon anxiété avant un départ important (trou n°1, compétition…).",
-                    "Je parviens à évacuer rapidement la frustration après un mauvais coup ou un mauvais trou.",
-                    "Je ne laisse pas la colère ou l’agacement affecter mes décisions sur le parcours.",
-                    "Je sais canaliser mon excitation après un très bon coup ou une bonne série.",
-                    "Je ne ressens pas de peur excessive sur des coups difficiles (bunker, obstacle d’eau, putt sous pression…)."
+                    "Je sais gérer mon anxiété avant un départ important.",
+                    "Je parviens à évacuer rapidement la frustration.",
+                    "Je ne laisse pas la colère affecter mes décisions.",
+                    "Je sais canaliser mon excitation.",
+                    "Je ne ressens pas de peur excessive sur des coups difficiles."
                 ]},
                 { name: "Concentration et focus", questions: [
                     "Je suis capable de maintenir ma concentration sur 18 trous.",
-                    "Je ne me laisse pas distraire par les autres joueurs ou le public.",
-                    "Je sais garder un état d'esprit positif même quand le jeu devient difficile.",
-                    "Je reste dans le moment présent et évite de ressasser mes erreurs passées.",
+                    "Je ne me laisse pas distraire par les autres joueurs.",
+                    "Je sais garder un état d'esprit positif.",
+                    "Je reste dans le moment présent.",
                     "J’ai une routine mentale efficace avant chaque coup."
                 ]},
                 { name: "Stratégie et adaptation", questions: [
-                    "Je sais adapter mon jeu aux conditions climatiques et au parcours.",
-                    "Je prends le temps d’analyser chaque coup avant de jouer.",
-                    "Je suis capable de modifier ma stratégie si nécessaire en cours de partie.",
-                    "Je sais m’inspirer des bons coups de mes adversaires pour progresser.",
-                    "Je ne me précipite pas sous la pression et reste méthodique."
+                    "Je sais adapter mon jeu aux conditions.",
+                    "Je prends le temps d’analyser chaque coup.",
+                    "Je modifie ma stratégie si nécessaire.",
+                    "Je m’inspire des bons coups de mes adversaires.",
+                    "Je ne me précipite pas sous la pression."
                 ]},
                 { name: "Motivation et engagement", questions: [
-                    "J’ai un objectif précis à long terme pour mon jeu.",
-                    "Je joue régulièrement et je m’entraîne avec sérieux.",
-                    "Je trouve toujours du plaisir à jouer, même après un mauvais parcours.",
-                    "Je ressens une vraie satisfaction quand je progresse mentalement.",
-                    "Je suis prêt à travailler mon mental autant que ma technique."
+                    "J’ai un objectif précis à long terme.",
+                    "Je joue régulièrement et m’entraîne sérieusement.",
+                    "Je trouve toujours du plaisir à jouer.",
+                    "Je ressens une satisfaction quand je progresse.",
+                    "Je suis prêt à travailler mon mental."
                 ]}
             ];
             
@@ -107,18 +107,22 @@
                         categoryScore += value;
                         total += value;
                     });
-                    feedback.push(`${category.name}: ${Math.round((categoryScore / 50) * 100)}%`);
+                    let categoryPercentage = Math.round((categoryScore / 50) * 100);
+                    let feedbackMessage = categoryPercentage < 30 ? '<span style="color:red;"><b>Il y a urgence à travailler ce point.</b></span>' :
+                                         categoryPercentage < 40 ? '<span style="color:orange;"><b>Ce point peut être amélioré.</b></span>' :
+                                         '<span style="color:green;"><b>Vous êtes au top, continuez ainsi !</b></span>';
+                    feedback.push(`<p>${category.name}: ${categoryPercentage}% - ${feedbackMessage}</p>`);
                 });
                 let percentage = Math.round((total / 200) * 100);
+                
                 let resultHTML = `<h2>🧠 Mon mental au golf</h2><br>
-                    <div class='result'>
-                        <p>🔢 Votre mental au golf est à <strong>${percentage}%</strong></p>
-                        ${feedback.join('<br>')}
-                    </div><br>
-                    <button onclick='location.reload()'>Retour</button>`;
+                    <p>🔢 Votre mental au golf est à <strong>${percentage}%</strong></p>
+                    ${feedback.join('')}<br>
+                    <button onclick='location.reload()'>Recommencer le test</button>`;
                 document.body.innerHTML = resultHTML;
             });
         });
     </script>
 </body>
 </html>
+
