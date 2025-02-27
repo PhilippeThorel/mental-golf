@@ -111,7 +111,7 @@
                     let feedbackMessage = categoryPercentage < 30 ? '<span style="color:red;"><b>Il y a urgence à travailler ce point.</b></span>' :
                                          categoryPercentage < 70 ? '<span style="color:orange;"><b>Ce point peut être amélioré.</b></span>' :
                                          '<span style="color:green;"><b>Vous êtes au top, continuez ainsi !</b></span>';
-                    feedback.push(`<p><span style='color:${categoryPercentage < 30 ? "red" : categoryPercentage < 70 ? "orange" : "green"}; font-weight:bold;'>${category.name}: ${categoryPercentage}%</span> - ${feedbackMessage}</p>`);
+                    feedback.push(`<p><span style='color:${categoryPercentage < 30 ? "red" : categoryPercentage < 70 ? "orange" : "green"}; font-weight:bold;'>${category.name}: ${categoryPercentage}%</span> - <span style='color:black; font-weight:normal;'>${categoryPercentage < 30 ? "Il y a urgence à travailler ce point." : categoryPercentage < 70 ? "Ce point peut être amélioré." : "Vous êtes au top, continuez ainsi !"}</span></p>`);
                 });
                 let percentage = Math.round((total / 200) * 100);
                 
