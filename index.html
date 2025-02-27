@@ -62,6 +62,32 @@
                 ]}
             ];
             
+            const feedbackOptions = {
+                red: [
+                    "Il y a urgence à travailler ce point.",
+                    "Ce domaine est une priorité absolue pour progresser.",
+                    "Vous devez impérativement renforcer cette compétence.",
+                    "Ce point nécessite une attention immédiate pour améliorer votre jeu."
+                ],
+                orange: [
+                    "Ce point peut être amélioré.",
+                    "Un travail supplémentaire serait bénéfique ici.",
+                    "Vous pouvez encore progresser dans cette dimension.",
+                    "Un effort dans ce domaine pourrait faire la différence."
+                ],
+                green: [
+                    "Vous êtes au top, continuez ainsi !",
+                    "Excellent niveau, gardez cette dynamique.",
+                    "Très bon score, poursuivez votre engagement.",
+                    "Vous maîtrisez bien cet aspect, maintenez vos efforts."
+                ]
+            };
+            
+            function getRandomFeedback(color) {
+                let options = feedbackOptions[color];
+                return options[Math.floor(Math.random() * options.length)];
+            }
+            
             const pagesContainer = document.getElementById("pagesContainer");
             const pages = [];
             
@@ -108,18 +134,11 @@
                         total += value;
                     });
                     let categoryPercentage = Math.round((categoryScore / 50) * 100);
-                    let feedbackMessage = categoryPercentage < 30 ? '<span style="color:red;"><b>Il y a urgence à travailler ce point.</b></span>' :
-                                         categoryPercentage < 70 ? '<span style="color:orange;"><b>Ce point peut être amélioré.</b></span>' :
-                                         '<span style="color:green;"><b>Vous êtes au top, continuez ainsi !</b></span>';
-                    feedback.push(`<p><span style='color:${categoryPercentage < 30 ? "red" : categoryPercentage < 70 ? "orange" : "green"}; font-weight:bold;'>${category.name}: ${categoryPercentage}%</span> - <span style='color:black; font-weight:normal;'>${categoryPercentage < 30 ? "Il y a urgence à travailler ce point." : categoryPercentage < 70 ? "Ce point peut être amélioré." : "Vous êtes au top, continuez ainsi !"}</span></p>`);
+                    let color = categoryPercentage < 30 ? "red" : categoryPercentage < 70 ? "orange" : "green";
+                    feedback.push(`<p><span style='color:${color}; font-weight:bold;'>${category.name}: ${categoryPercentage}%</span> - <span style='color:black; font-weight:normal;'>${getRandomFeedback(color)}</span></p>`);
                 });
                 let percentage = Math.round((total / 200) * 100);
-                
-                let resultHTML = `<h2>🧠 Mon mental au golf</h2><br>
-                    <p><strong>🔢 Votre mental au golf est globalement à ${percentage}%</strong></p>
-                    ${feedback.join('')}<br>
-                    <button onclick='location.reload()'>Recommencer le test</button>`;
-                document.body.innerHTML = resultHTML;
+                document.body.innerHTML = `<h2>🧠 Mon mental au golf</h2><br><p><strong>🔢 Votre mental au golf est globalement à ${percentage}%</strong></p>${feedback.join('')}<br><button onclick='location.reload()'>Recommencer le test</button>`;
             });
         });
     </script>
