@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Votre mental au golf</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; }
+        h2 { color: #2c3e50; text-align: center; margin-bottom: 20px; }
+        .question { margin-bottom: 15px; }
+        .result { font-weight: bold; margin-top: 20px; text-align: center; }
+        button { padding: 10px; background: #3498db; color: white; border: none; cursor: pointer; border-radius: 20px; }
+        button:hover { background: #2980b9; }
+        input[type="range"] { width: 100%; accent-color: #7f8c8d; }
+        .category-feedback { margin-top: 10px; font-weight: bold; }
+        .page { display: none; }
+        .active { display: block; }
+        .button-container { display: flex; justify-content: space-between; margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <h2>🧠 Mon mental au golf</h2>
+    <div id="pagesContainer"></div>
+    <div class="button-container">
+        <button id="prevButton" type="button" style="display: none;">Précédent</button>
+        <button id="nextButton" type="button" style="margin-left: auto;">Suivant</button>
+        <button id="calculateButton" type="button" style="display: none;">Voir les résultats</button>
+    </div>
+    <div id="result" class="result"></div>
+    
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            let currentPage = 0;
+            const categories = [
+                { name: "Gestion des émotions et du stress", questions: [
+                    "Je sais gérer mon anxiété avant un départ important.",
+                    "Je parviens à évacuer rapidement la frustration.",
+                    "Je ne laisse pas la colère affecter mes décisions.",
+                    "Je sais canaliser mon excitation.",
+                    "Je ne ressens pas de peur excessive sur des coups difficiles."
+                ], feedbacks: [
+                    "Travailler votre anxiété au départ de certains trous vous aiderait à mieux débuter vos parcours.",
+                    "Apprendre à évacuer rapidement la frustration après un mauvais coup renforcerait votre mental.",
+                    "Ne pas laisser la colère influencer vos choix stratégiques améliorerait vos performances sur le parcours.",
+                    "Garder votre concentration après un bon coup éviterait des erreurs d’excès de confiance.",
+                    "Renforcer votre gestion de la pression sur les obstacles techniques vous rendrait plus régulier."
+                ]},
+                { name: "Concentration et focus", questions: [
+                    "Je suis capable de maintenir ma concentration sur 18 trous.",
+                    "Je ne me laisse pas distraire par les autres joueurs.",
+                    "Je sais garder un état d'esprit positif.",
+                    "Je reste dans le moment présent.",
+                    "J’ai une routine mentale efficace avant chaque coup."
+                ], feedbacks: [
+                    "Mieux gérer votre concentration sur toute la partie améliorerait votre régularité.",
+                    "Apprendre à ignorer les distractions extérieures renforcerait votre focus.",
+                    "Garder un état d’esprit positif après une erreur favoriserait une meilleure récupération mentale.",
+                    "Rester ancré dans l’instant présent vous permettrait d’éviter des erreurs d’anticipation.",
+                    "Renforcer votre routine mentale garantirait plus de stabilité dans votre exécution."
+                ]}
+            ];
+            
+            const pagesContainer = document.getElementById("pagesContainer");
+            categories.forEach((category, catIndex) => {
+                const page = document.createElement("div");
+                page.classList.add("page");
+                if (catIndex === 0) page.classList.add("active");
+                page.innerHTML = `<h3>${category.name}</h3>`;
+                category.questions.forEach((q, index) => {
+                    page.innerHTML += `<label>${q}</label>
+                    <input type="range" min="1" max="10" id="q${catIndex}_${index}" value="5"><br>`;
+                });
+                pagesContainer.appendChild(page);
+            });
+            
+            const prevButton = document.getElementById("prevButton");
+            const nextButton = document.getElementById("nextButton");
+            const calculateButton = document.getElementById("calculateButton");
+            function changePage(step) {
+                document.querySelector(".active").classList.remove("active");
+                currentPage += step;
+                pagesContainer.children[currentPage].classList.add("active");
+                prevButton.style.display = currentPage === 0 ? "none" : "block";
+                nextButton.style.display = currentPage === pagesContainer.children.length - 1 ? "none" : "block";
+                calculateButton.style.display = currentPage === pagesContainer.children.length - 1 ? "block" : "none";
+            }
+            
+            prevButton.addEventListener("click", () => changePage(-1));
+            nextButton.addEventListener("click", () => changePage(1));
+            calculateButton.addEventListener("click", function() {
+                if (currentPage !== pagesContainer.children.length - 1) return;
+                let feedback = [];
+                categories.forEach((category, catIndex) => {
+                    let scores = Array.from(document.querySelectorAll(`#pagesContainer input[id^=q${catIndex}_]`)).map(input => parseInt(input.value));
+                    let additionalFeedback = scores.map((score, index) => score < 5 ? category.feedbacks[index] : null).filter(Boolean);
+                    if (additionalFeedback.length) {
+                        feedback.push(`<p><strong>${category.name}:</strong><br>${additionalFeedback.join("<br>")}</p>`);
+                    }
+                });
+                document.getElementById("result").innerHTML = `<h2>🧠 Mon mental au golf</h2><br>${feedback.join('')}<br><button onclick='location.reload()'>Recommencer le test</button>`;
+            });
+        });
+    </script>
+</body>
+</html>
