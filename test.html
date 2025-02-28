@@ -8,7 +8,7 @@
         body { font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; }
         h2 { color: #2c3e50; text-align: center; margin-bottom: 20px; }
         .question { margin-bottom: 15px; }
-        .result { font-weight: bold; margin-top: 20px; text-align: center; }
+        .result { font-weight: bold; margin-top: 20px; text-align: center; display: none; }
         button { padding: 10px; background: #3498db; color: white; border: none; cursor: pointer; border-radius: 20px; }
         button:hover { background: #2980b9; }
         input[type="range"] { width: 100%; accent-color: #7f8c8d; }
@@ -31,6 +31,12 @@
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             let currentPage = 0;
+            const pagesContainer = document.getElementById("pagesContainer");
+            const resultContainer = document.getElementById("result");
+            const prevButton = document.getElementById("prevButton");
+            const nextButton = document.getElementById("nextButton");
+            const calculateButton = document.getElementById("calculateButton");
+
             const categories = [
                 { name: "Gestion des émotions et du stress", questions: [
                     "Je sais gérer mon anxiété avant un départ important.",
@@ -60,7 +66,6 @@
                 ]}
             ];
             
-            const pagesContainer = document.getElementById("pagesContainer");
             categories.forEach((category, catIndex) => {
                 const page = document.createElement("div");
                 page.classList.add("page");
@@ -72,10 +77,7 @@
                 });
                 pagesContainer.appendChild(page);
             });
-            
-            const prevButton = document.getElementById("prevButton");
-            const nextButton = document.getElementById("nextButton");
-            const calculateButton = document.getElementById("calculateButton");
+
             function changePage(step) {
                 document.querySelector(".active").classList.remove("active");
                 currentPage += step;
@@ -84,11 +86,15 @@
                 nextButton.style.display = currentPage === pagesContainer.children.length - 1 ? "none" : "block";
                 calculateButton.style.display = currentPage === pagesContainer.children.length - 1 ? "block" : "none";
             }
-            
+
             prevButton.addEventListener("click", () => changePage(-1));
             nextButton.addEventListener("click", () => changePage(1));
             calculateButton.addEventListener("click", function() {
-                if (currentPage !== pagesContainer.children.length - 1) return;
+                resultContainer.innerHTML = "";
+                resultContainer.style.display = "block";
+                pagesContainer.style.display = "none";
+                document.querySelector(".button-container").style.display = "none";
+
                 let feedback = [];
                 categories.forEach((category, catIndex) => {
                     let scores = Array.from(document.querySelectorAll(`#pagesContainer input[id^=q${catIndex}_]`)).map(input => parseInt(input.value));
@@ -97,7 +103,7 @@
                         feedback.push(`<p><strong>${category.name}:</strong><br>${additionalFeedback.join("<br>")}</p>`);
                     }
                 });
-                document.getElementById("result").innerHTML = `<h2>🧠 Mon mental au golf</h2><br>${feedback.join('')}<br><button onclick='location.reload()'>Recommencer le test</button>`;
+                resultContainer.innerHTML = `<h2>🧠 Mon mental au golf</h2><br>${feedback.join('')}<br><button onclick='location.reload()'>Recommencer le test</button>`;
             });
         });
     </script>
